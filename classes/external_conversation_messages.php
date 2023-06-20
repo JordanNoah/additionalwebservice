@@ -5,6 +5,7 @@ namespace local_additional_web_service;
 use context_system;
 use core_message\api;
 use core_message\helper;
+use core_reportbuilder\local\aggregation\count;
 use external_api;
 use external_multiple_structure;
 use external_single_structure;
@@ -148,12 +149,12 @@ class external_conversation_messages extends external_api
             $msg = new \stdClass();
             $msg->id = $message->id;
             $msg->useridfrom = $message->useridfrom;
-            error_log($emoji->isOnlyEmoji());
-            if ($emoji->isOnlyEmoji()){
-                $msg->text = $message->fullmessage;
+            if(count($emoji->detect_emoji($message->fullmessage))>0){
+                $msg->text = $emoji->replace_emoji($message->fullmessage,":",":");
             }else{
                 $msg->text = $message->fullmessage;
             }
+
             $msg->timecreated = $message->timecreated;
             $arrmessages[] = $msg;
         }
